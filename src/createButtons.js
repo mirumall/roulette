@@ -45,7 +45,7 @@ export function createButtons() {
 
       // 결과 텍스트 초기화
       this.prizeTextA.setText("");
-      this.prizeTextB.setText("");
+
 
       this.updateButtonState(false); // 모든 버튼 비활성화
       this.spinInfinite(this.wheel1, 1); // 첫 번째 룰렛 무한 회전
@@ -60,7 +60,7 @@ export function createButtons() {
       }
 
       // 결과 텍스트 초기화
-      this.prizeTextA.setText("");
+
       this.prizeTextB.setText("");
 
       this.updateButtonState(false); // 모든 버튼 비활성화

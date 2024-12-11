@@ -10,7 +10,7 @@ export function createPin() {
     // 클릭 효과 (크기 줄이기)
     this.tweens.add({
       targets: this.pin,
-      scale: 0.95, // 크기를 90%로 줄임
+      scale: 0.90, // 크기를 90%로 줄임
       duration: 100, // 100ms 동안
       yoyo: true, // 다시 원래 크기로 복귀
       ease: "Power1", // 부드러운 애니메이션

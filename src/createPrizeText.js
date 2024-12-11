@@ -77,6 +77,8 @@ export function createPrizeText() {
     )
     .setOrigin(0.5);
 
+
+
   // A와 B 박스 사이에 선 추가
   const lineStartX = this.scale.width / 2 - boxWidth / 2 + 10; // 선 시작 X
   const lineEndX = this.scale.width / 2 + boxWidth / 2 - 10; // 선 끝 X

@@ -4,7 +4,7 @@ export const gameOptions = {
     { degrees: 45, color: "#fcda6a", text: "카타르로 여행 떠나기" },
     { degrees: 25, color: "#89cff0", text: "게임말 앞으로 10칸 이동" },
     { degrees: 43, color: "#b5e9a1", text: "게임말 뒤로 15칸 이동" },
-    { degrees: 20, color: "#fe8c68", text: "베트남으로 여행 떠나기" },
+    { degrees: 20, color: "#89cff0", text: "베트남으로 여행 떠나기" },
     { degrees: 42, color: "#ffe16f", text: "노르웨이로 여행 떠나기" },
     { degrees: 20, color: "#fe8c68", text: "다음 기회에" },
     { degrees: 12, color: "#89cff0", text: "게임알 1개, 도착지로 이동" },
@@ -46,7 +46,7 @@ export const secondWheelOptions = {
       text: "싱가폴로 여행 떠나기",
       textColor: "#ffffff",
     },
-    { degrees: 45, color: "#2c7000", text: "꽝!", textColor: "#ffffff" },
+    { degrees: 45, color: "#fe8c68", text: "꽝", textColor: "#ffffff" },
     {
       degrees: 45,
       color: "#283a78",
