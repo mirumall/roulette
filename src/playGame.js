@@ -9,7 +9,7 @@ import { readResult } from "./readResult.js";
 import { updatePinState } from "./updatePinState.js";
 import { updateButtonState } from "./updateButtonState.js";
 import { spinInfinite } from "./spinInfinite.js";
-import { spinWheel } from "./spinWheel.js";
+
 import { getPrizeIndex } from "./getPrizeIndex.js";
 import { createResetButton, createModal, showModal } from "./resetModal.js";
 
@@ -32,6 +32,7 @@ class playGame extends Phaser.Scene {
     this.load.image("activeButtonA", "./assets/active_button_a.png");
     this.load.image("activeButtonB", "./assets/active_button_b.png");
     this.load.image("activeButtonAB", "./assets/active_button_ab.png");
+    this.load.spritesheet("sparkAnimation", "./assets/spark.png", { frameWidth: 256, frameHeight: 143 }); // 스프라이트 시트 로드
     this.load.audio("spinSound", "./assets/spinSound.mp3");
     this.load.audio("backgroundMusic", "./assets/backgroundMusic.mp3");
   }
@@ -48,7 +49,6 @@ class playGame extends Phaser.Scene {
       volume: 0.5
     });
     this.backgroundMusic.play();
-
 
     this.spinSound = this.sound.add("spinSound", {
       loop: true,
@@ -70,24 +70,13 @@ class playGame extends Phaser.Scene {
     if (gameObject.texture.key === 'pin' && this.canSpin) {
       this.pinClickCount++;
       this.canSpin = false; 
-      console.log(`핀 클릭 횟수: ${this.pinClickCount}`);
-  
-     
-      if (this.pinClickCount >= 30) {
-        this.stopWheels(() => {
-          this.showGameOver(); 
-        });
-      }else {
-        // 룰렛을 돌리고 나서 다시 canSpin을 true로 설정
+      
         this.time.delayedCall(4000, () => {
           this.canSpin = true;
         });
-      }
+      
     }
   }
-  
-  
-  
 
   stopWheels(callback) {
     this.time.delayedCall(4000, () => {
@@ -97,17 +86,42 @@ class playGame extends Phaser.Scene {
       this.time.delayedCall(100, callback);
     });
   }
-  
 
   showGameOver() {
+    this.canSpin = false; // 다시 스핀 가능하도록 설정
+    // 폭죽 애니메이션 추가 (스프라이트 시트를 기반으로 변경)
+    const spark = this.add.sprite(this.scale.width / 2, this.scale.height / 2, 'sparkAnimation');
 
-    this.add.text(this.scale.width / 2, this.scale.height / 2, 'Game Over', {
-      fontSize: '64px',
-      color: '#ff0000',
-      align: 'center'
-    }).setOrigin(0.5);
+    // 스프라이트의 크기를 화면 크기에 맞게 조정
+    spark.displayWidth = this.scale.width/1.2;
+    spark.displayHeight = this.scale.height/1.2;
 
-    this.scene.pause(); 
+    // 애니메이션 생성 및 재생
+    this.anims.create({
+      key: 'explode',
+      frames: this.anims.generateFrameNumbers('sparkAnimation', { start: 0, end: 84 }), // 5x17 = 85프레임
+      frameRate: 30, // 초당 프레임
+      repeat: 0 // 반복 없음
+    });
+
+    spark.play('explode'); // 애니메이션 실행
+
+    // 2초 후 애니메이션 종료 및 초기화
+    this.time.delayedCall(4000, () => {
+      spark.destroy(); // 애니메이션 제거
+      this.pinClickCount = 0; // 핀 클릭 카운트 초기화
+      this.canSpin = true; // 다시 스핀 가능하도록 설정
+
+
+    this.wheel1 = new Wheel(this, gameOptions, 0);
+    this.wheel2 = new Wheel(this, secondWheelOptions, 1);
+    createPin.call(this);
+
+ 
+
+      // 게임 다시 시작
+      this.scene.resume();
+    });
   }
 
   showModal() {
@@ -139,7 +153,6 @@ class playGame extends Phaser.Scene {
   handleStop(wheel) {
     handleStop.call(this, wheel);
 
-
     if (this.spinSound.isPlaying) {
       this.spinSound.stop();
     }
@@ -166,12 +179,6 @@ class playGame extends Phaser.Scene {
     }
   }
 
-  spinWheel(directions, ...wheels) {
-    spinWheel.call(this, directions, ...wheels);
-    if (!this.spinSound.isPlaying) {
-      this.spinSound.play();
-    }
-  }
 
   getPrizeIndex(degrees, slices) {
     return getPrizeIndex.call(this, degrees, slices);
@@ -192,7 +199,7 @@ window.onload = function () {
       },
       max: {
         width: 1200, 
-        height: 2800, 
+        height: 2800,
       },
       parent: 'thegame',
     },
@@ -202,4 +209,3 @@ window.onload = function () {
   console.log(Phaser);
   new Phaser.Game(gameConfig);
 };
-

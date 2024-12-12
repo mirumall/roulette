@@ -165,4 +165,23 @@ export class Wheel {
       currentAngle += charAngle; // 다음 문자 위치로 이동
     });
   }
+
+  // 특정 슬라이스를 12시 방향에 위치시키는 메서드
+  positionSliceAt12(slice) {
+    const sliceIndex = this.options.slices.findIndex(s => s.degrees === slice.degrees && s.color === slice.color && s.text === slice.text);
+    if (sliceIndex !== -1) {
+      const angleOffset = 360 - (sliceIndex * slice.degrees);
+      this.setRotation(angleOffset);
+    }
+  }
+
+  setRotation(angle) {
+    // 룰렛의 회전 각도를 설정하는 로직 구현
+    this.scene.tweens.add({
+      targets: this.wheelContainer,
+      angle: angle,
+      duration: 1000,
+      ease: 'Cubic.easeOut'
+    });
+  }
 }
