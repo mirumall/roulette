@@ -17,13 +17,4 @@ export function handleStop(wheel) {
     this.outerResult = prizeText;
     this.readResult(prizeText); // 결과 읽기
   }
-  if (this.innerResult && this.outerResult) {
-    console.log(`안쪽 결과: ${this.innerResult}, 바깥쪽 결과: ${this.outerResult}`);
-    // 조건: 안쪽 룰렛이 "GAME OVER"이고 바깥 룰렛이 "WINNER"
-    if (this.innerResult === "GAME OVER" && this.outerResult === "WINNER") {
-      this.showGameOver();
-    } else {
-      this.canSpin = true; // 다시 스핀 가능하도록 설정
-    }
-  }
 }

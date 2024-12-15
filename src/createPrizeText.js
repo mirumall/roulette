@@ -2,8 +2,8 @@ import { gameOptions, secondWheelOptions } from "./gameOptions.js";
 
 export function createPrizeText() {
   // 박스 스타일 정의
-  const boxWidth = 400;
-  const boxHeight = 60;
+  const boxWidth = 500; // 박스 너비 증가
+  const boxHeight = 80; // 박스 높이 증가
   const boxBackgroundColor = 0xffffff; // 흰색
   const boxBorderColor = 0xc0c0c0; // 연한 회색
   const boxBorderWidth = 0;
@@ -41,9 +41,9 @@ export function createPrizeText() {
   this.prizeTextA = this.add
     .text(
       this.scale.width / 2,
-      this.scale.height / 2 - secondWheelOptions.wheelRadius - 90, // A 룰렛 텍스트 위치
+      this.scale.height / 2 - secondWheelOptions.wheelRadius - 95, // A 룰렛 텍스트 위치
       "A룰렛 결과",
-      { font: "20px Arial", color: "#000" } // 텍스트 스타일
+      { font: "30px Arial", color: "#000" } // 텍스트 스타일 (폰트 크기 증가)
     )
     .setOrigin(0.5);
 
@@ -71,13 +71,11 @@ export function createPrizeText() {
   this.prizeTextB = this.add
     .text(
       this.scale.width / 2,
-      this.scale.height / 2 - gameOptions.wheelRadius - 90, // B 룰렛 텍스트 위치
+      this.scale.height / 2 - gameOptions.wheelRadius - 85, // B 룰렛 텍스트 위치
       "B룰렛 결과",
-      { font: "20px Arial", color: "#000" } // 텍스트 스타일
+      { font: "30px Arial", color: "#000" } // 텍스트 스타일 (폰트 크기 증가)
     )
     .setOrigin(0.5);
-
-
 
   // A와 B 박스 사이에 선 추가
   const lineStartX = this.scale.width / 2 - boxWidth / 2 + 10; // 선 시작 X

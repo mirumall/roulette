@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 import { gameOptions } from "./gameOptions.js";
 
 export class Wheel {
@@ -38,7 +38,7 @@ export class Wheel {
       this.addSliceTexts(startDegrees, wheelRadius);
     } else {
       this.addSecondWheelTexts(startDegrees, wheelRadius);
-      this.wheelContainer.setDepth(-1); // 두 번째 룰렛의 z-index를 낮게 설정
+      this.wheelContainer.setDepth(-1);
     }
   }
 
@@ -62,15 +62,30 @@ export class Wheel {
       if (!slice.text) return;
 
       let textX =
-        (wheelRadius - 100) *
+        (wheelRadius - 140) * // 텍스트를 더 안쪽으로 배치
         Math.cos(Phaser.Math.DegToRad(startDegrees + slice.degrees / 2));
       let textY =
-        (wheelRadius - 100) *
+        (wheelRadius - 140) * // 텍스트를 더 안쪽으로 배치
         Math.sin(Phaser.Math.DegToRad(startDegrees + slice.degrees / 2));
+
+      if (slice.image) {
+        let imageX =
+          (wheelRadius - 70) * // 이미지를 더 바깥쪽으로 배치
+          Math.cos(Phaser.Math.DegToRad(startDegrees + slice.degrees / 2.7));
+        let imageY =
+          (wheelRadius - 60) * // 이미지를 더 바깥쪽으로 배치
+          Math.sin(Phaser.Math.DegToRad(startDegrees + slice.degrees / 2));
+
+        let image = this.scene.add.image(imageX, imageY, slice.image);
+        image.setScale(0.04); // 이미지 크기 조정
+        image.setOrigin(0.7);
+        image.setAngle(startDegrees + slice.degrees / 2 + 190);
+        this.wheelContainer.add(image);
+      }
 
       let text = this.scene.add.text(textX, textY, slice.text, {
         fontSize: "14px",
-        fontFamily: "CookieRun",
+        fontFamily: "jalnan2",
         color: "#000000",
         fontWeight: "bold",
       });
@@ -85,7 +100,7 @@ export class Wheel {
 
   addSecondWheelTexts(startDegrees, wheelRadius) {
     let textRadius = wheelRadius - 22; // 텍스트가 위치할 반지름
-    let font = "20px CookieRun"; // 텍스트의 폰트 스타일
+    let font = "20px jalnan2"; // 텍스트의 폰트 스타일
 
     this.options.slices.forEach((slice) => {
       if (!slice.text) return;
@@ -168,9 +183,14 @@ export class Wheel {
 
   // 특정 슬라이스를 12시 방향에 위치시키는 메서드
   positionSliceAt12(slice) {
-    const sliceIndex = this.options.slices.findIndex(s => s.degrees === slice.degrees && s.color === slice.color && s.text === slice.text);
+    const sliceIndex = this.options.slices.findIndex(
+      (s) =>
+        s.degrees === slice.degrees &&
+        s.color === slice.color &&
+        s.text === slice.text
+    );
     if (sliceIndex !== -1) {
-      const angleOffset = 360 - (sliceIndex * slice.degrees);
+      const angleOffset = 360 - sliceIndex * slice.degrees;
       this.setRotation(angleOffset);
     }
   }
@@ -181,7 +201,7 @@ export class Wheel {
       targets: this.wheelContainer,
       angle: angle,
       duration: 1000,
-      ease: 'Cubic.easeOut'
+      ease: "Cubic.easeOut",
     });
   }
 }

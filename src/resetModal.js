@@ -9,8 +9,10 @@ export function createResetButton(scene) {
   resetButton.style.left = "50%";
   resetButton.style.transform = "translateX(-50%)";
   resetButton.style.padding = "10px 15px";
-  resetButton.style.fontSize = "18px"; 
-  resetButton.style.backgroundColor = "#ffffff";
+  resetButton.style.fontSize = "18px";
+  resetButton.style.color = "#fff";
+  resetButton.style.fontFamily = "jalnan2";
+  resetButton.style.backgroundColor = "#ff0000";
   resetButton.style.border = "none";
   resetButton.style.borderRadius = "10px";
   resetButton.style.cursor = "pointer";
@@ -51,15 +53,13 @@ export function showModal(scene) {
   const modal = document.getElementById("modal");
   const resetButton = document.getElementById("resetButton");
 
-
   modal.innerHTML = "";
 
   modal.style.width = "70%";
   modal.style.height = "80%";
-  modal.style.fontSize = "1.5rem"; 
+  modal.style.fontSize = "1.5rem";
   modal.style.padding = "20px";
   modal.style.overflowY = "auto";
-
 
   const modalTitle = document.createElement("h2");
   modalTitle.innerText = "룰렛 값 변경";
@@ -68,12 +68,10 @@ export function showModal(scene) {
   modalTitle.style.fontSize = "1.5rem";
   modal.appendChild(modalTitle);
 
-
   const table = document.createElement("table");
   table.style.width = "100%";
   table.style.borderCollapse = "collapse";
   table.style.marginBottom = "20px";
-
 
   const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
@@ -84,7 +82,7 @@ export function showModal(scene) {
   innerHeader.style.padding = "15px";
   innerHeader.style.backgroundColor = "#f0f0f0";
   innerHeader.style.textAlign = "center";
-  innerHeader.style.fontSize = "1rem"; 
+  innerHeader.style.fontSize = "1rem";
   innerHeader.style.width = "50%";
 
   const outerHeader = document.createElement("th");
@@ -94,47 +92,47 @@ export function showModal(scene) {
   outerHeader.style.backgroundColor = "#f0f0f0";
   outerHeader.style.textAlign = "center";
   outerHeader.style.fontSize = "1rem";
-  outerHeader.style.width = "50%"; 
+  outerHeader.style.width = "50%";
 
   headerRow.appendChild(innerHeader);
   headerRow.appendChild(outerHeader);
   thead.appendChild(headerRow);
   table.appendChild(thead);
 
-
   const tbody = document.createElement("tbody");
 
-  const maxLength = Math.max(gameOptions.slices.length, secondWheelOptions.slices.length);
+  const maxLength = Math.max(
+    gameOptions.slices.length,
+    secondWheelOptions.slices.length
+  );
 
   for (let i = 0; i < maxLength; i++) {
     const row = document.createElement("tr");
-
 
     const innerCell = document.createElement("td");
     innerCell.style.border = "1px solid #ccc";
     innerCell.style.padding = "10px";
     innerCell.style.textAlign = "center";
     innerCell.style.backgroundColor = "#fff";
-    innerCell.style.fontSize = "12px"; 
-    innerCell.innerText = gameOptions.slices[i]?.text || ""; 
+    innerCell.style.fontSize = "12px";
+    innerCell.innerText = gameOptions.slices[i]?.text || "";
     innerCell.dataset.type = "inner";
     innerCell.dataset.index = i;
     if (["GAME OVER", "다음 기회에"].includes(innerCell.innerText)) {
       innerCell.contentEditable = false;
-      innerCell.style.backgroundColor = "#f0f0f0"; 
+      innerCell.style.backgroundColor = "#f0f0f0";
     } else {
       innerCell.contentEditable = true;
     }
     row.appendChild(innerCell);
-
 
     const outerCell = document.createElement("td");
     outerCell.style.border = "1px solid #ccc";
     outerCell.style.padding = "10px";
     outerCell.style.textAlign = "center";
     outerCell.style.backgroundColor = "#fff";
-    outerCell.style.fontSize = "12px"; 
-    outerCell.innerText = secondWheelOptions.slices[i]?.text || ""; 
+    outerCell.style.fontSize = "12px";
+    outerCell.innerText = secondWheelOptions.slices[i]?.text || "";
     outerCell.dataset.type = "outer";
     outerCell.dataset.index = i;
     if (["WINNER", "꽝"].includes(outerCell.innerText)) {
@@ -151,19 +149,17 @@ export function showModal(scene) {
   table.appendChild(tbody);
   modal.appendChild(table);
 
-
   const updateButton = document.createElement("button");
   updateButton.id = "updateButton";
   updateButton.innerText = "변경하기";
-  updateButton.style.display = "block"; 
-  updateButton.style.margin = "20px auto"; 
+  updateButton.style.display = "block";
+  updateButton.style.margin = "20px auto";
   updateButton.style.padding = "15px 30px";
   updateButton.style.fontSize = "1rem";
   updateButton.style.borderRadius = "8px";
   updateButton.style.border = "1px solid #ccc";
   updateButton.style.backgroundColor = "#ffffff";
   updateButton.style.cursor = "pointer";
-
 
   updateButton.addEventListener("click", () => {
     const cells = tbody.querySelectorAll("td");
@@ -181,17 +177,15 @@ export function showModal(scene) {
     scene.updateWheelOptions();
 
     modal.style.display = "none";
-    resetButton.style.backgroundColor = "#ffffff"; 
-    resetButton.style.color = "#000000"; 
+    resetButton.style.backgroundColor = "#ff0000";
+    resetButton.style.color = "#fff";
   });
 
   modal.appendChild(updateButton);
 
-
   modal.style.display = "block";
   modal.style.display = "block";
 
-
-  resetButton.style.backgroundColor = "#cccccc"; 
-  resetButton.style.color = "#ffffff"; 
+  resetButton.style.backgroundColor = "#cccccc";
+  resetButton.style.color = "#ffffff";
 }
