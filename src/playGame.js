@@ -9,20 +9,20 @@ import { readResult } from "./readResult.js";
 import { updatePinState } from "./updatePinState.js";
 import { updateButtonState } from "./updateButtonState.js";
 import { spinInfinite } from "./spinInfinite.js";
-
 import { getPrizeIndex } from "./getPrizeIndex.js";
-import { createResetButton, createModal, showModal } from "./resetModal.js";
+import { createModal, showModal } from "./resetModal.js";
 
 class playGame extends Phaser.Scene {
   constructor() {
     super("PlayGame");
     this.currentTweens = [];
     this.canSpin = true;
-    this.pinClickCount = 0; // 핀 클릭 카운트 변수
-    this.innerResult = null; // A 룰렛 결과
+    this.pinClickCount = 0;
+    this.innerResult = null;
     this.outerResult = null;
-    this.activeButton = null; // 현재 활성화된 버튼
-    this.buttonInterval = null; // 버튼 상태를 주기적으로 변경하는 타이머
+    this.activeButton = null;
+    this.buttonInterval = null;
+    this.stopWheelTimer = null;
   }
 
   preload() {
@@ -38,8 +38,9 @@ class playGame extends Phaser.Scene {
     this.load.spritesheet("sparkAnimation", "./assets/spark.png", {
       frameWidth: 256,
       frameHeight: 143,
-    }); // 스프라이트 시트 로드
+    });
     this.load.audio("spinSound", "./assets/backgroundMusic.mp3");
+    this.load.audio("clickSound", "./assets/click.mp3");
   }
 
   create() {
@@ -52,8 +53,8 @@ class playGame extends Phaser.Scene {
     this.spinSound = this.sound.add("spinSound", {
       loop: true,
     });
+    this.clickSound = this.sound.add("clickSound");
 
-    createResetButton(this);
     createModal(this);
 
     const brandText = this.add
@@ -72,20 +73,49 @@ class playGame extends Phaser.Scene {
 
     this.input.on("gameobjectdown", this.onPinClick, this);
 
-    this.abutton.on("pointerdown", () => {
-      this.toggleButtonState(this.abutton, "activeButtonA", "abutton");
-    });
+    this.setupButton(this.abutton, "activeButtonA", "abutton", this.wheel1);
+    this.setupButton(this.bbutton, "activeButtonB", "bbutton", this.wheel2);
+    this.setupButton(
+      this.abbutton,
+      "activeButtonAB",
+      "abbutton",
+      this.wheel1,
+      this.wheel2
+    );
+  }
 
-    this.bbutton.on("pointerdown", () => {
-      this.toggleButtonState(this.bbutton, "activeButtonB", "bbutton");
-    });
+  setupButton(button, activeTexture, inactiveTexture, ...wheels) {
+    button.on("pointerdown", () => {
+      this.clickSound.play();
+      this.toggleButtonState(button, activeTexture, inactiveTexture);
 
-    this.abbutton.on("pointerdown", () => {
-      this.toggleButtonState(this.abbutton, "activeButtonAB", "abbutton");
+      this.time.delayedCall(
+        1000,
+        () => {
+          this.onPinClick(null, this.pin);
+        },
+        [],
+        this
+      );
+
+      // 10초 타이머 설정
+      this.stopWheelTimer = this.time.delayedCall(
+        10000,
+        () => {
+          wheels.forEach((wheel) => this.stopWheel(wheel));
+        },
+        [],
+        this
+      );
     });
   }
 
   toggleButtonState(button, activeTexture, inactiveTexture) {
+    // 모든 버튼 비활성화
+    this.abutton.disableInteractive();
+    this.bbutton.disableInteractive();
+    this.abbutton.disableInteractive();
+
     if (this.activeButton && this.activeButton !== button) {
       clearInterval(this.buttonInterval);
       this.activeButton.setTexture(this.activeButton.activeTexture);
@@ -101,7 +131,7 @@ class playGame extends Phaser.Scene {
       } else {
         button.setTexture(activeTexture);
       }
-    }, 500); // 500ms 간격으로 텍스처 변경
+    }, 500);
   }
 
   onPinClick(pointer, gameObject) {
@@ -109,19 +139,40 @@ class playGame extends Phaser.Scene {
       this.pinClickCount++;
       this.canSpin = false;
 
+      // 10초 타이머가 설정되어 있으면 취소
+      if (this.stopWheelTimer) {
+        this.stopWheelTimer.remove(false);
+        this.stopWheelTimer = null;
+      }
+
       this.time.delayedCall(4000, () => {
         this.canSpin = true;
       });
     }
   }
 
-  stopWheels(callback) {
-    this.time.delayedCall(4000, () => {
-      this.handleStop(this.wheel1);
-      this.handleStop(this.wheel2);
+  stopWheel(wheel) {
+    if (wheel.rotationTween) {
+      const currentAngle = wheel.wheelContainer.angle % 360;
+      const direction = wheel.direction || 1;
+      wheel.rotationTween.stop();
+      wheel.rotationTween = null;
 
-      this.time.delayedCall(100, callback);
-    });
+      const randomFinalAngle = Phaser.Math.Between(360, 720);
+      const targetAngle = currentAngle + direction * randomFinalAngle;
+
+      this.tweens.add({
+        targets: wheel.wheelContainer,
+        angle: targetAngle,
+        duration: 3000,
+        ease: "Cubic.easeOut",
+        onComplete: () => {
+          this.handleStop(wheel);
+          this.canSpin = true;
+          this.updateButtonState(true);
+        },
+      });
+    }
   }
 
   handleStop(wheel) {
@@ -142,42 +193,38 @@ class playGame extends Phaser.Scene {
   }
 
   showGameOver() {
-    this.canSpin = false; // 다시 스핀 가능하도록 설정
-    // 폭죽 애니메이션 추가 (스프라이트 시트를 기반으로 변경)
+    this.canSpin = false;
+
     const spark = this.add.sprite(
       this.scale.width / 2,
       this.scale.height / 2,
       "sparkAnimation"
     );
 
-    // 스프라이트의 크기를 화면 크기에 맞게 조정
     spark.displayWidth = this.scale.width / 1.2;
     spark.displayHeight = this.scale.height / 1.2;
 
-    // 애니메이션 생성 및 재생
     this.anims.create({
       key: "explode",
       frames: this.anims.generateFrameNumbers("sparkAnimation", {
         start: 0,
         end: 84,
-      }), // 5x17 = 85프레임
-      frameRate: 30, // 초당 프레임
-      repeat: 0, // 반복 없음
+      }),
+      frameRate: 30,
+      repeat: 0,
     });
 
-    spark.play("explode"); // 애니메이션 실행
+    spark.play("explode");
 
-    // 2초 후 애니메이션 종료 및 초기화
     this.time.delayedCall(4000, () => {
-      spark.destroy(); // 애니메이션 제거
-      this.pinClickCount = 0; // 핀 클릭 카운트 초기화
-      this.canSpin = true; // 다시 스핀 가능하도록 설정
+      spark.destroy();
+      this.pinClickCount = 0;
+      this.canSpin = true;
 
       this.wheel1 = new Wheel(this, gameOptions, 0);
       this.wheel2 = new Wheel(this, secondWheelOptions, 1);
       createPin.call(this);
 
-      // 게임 다시 시작
       this.scene.resume();
     });
   }
@@ -223,7 +270,9 @@ class playGame extends Phaser.Scene {
   spinInfinite(wheel, direction, speed) {
     spinInfinite.call(this, wheel, direction, speed);
     if (!this.spinSound.isPlaying) {
-      this.spinSound.play();
+      this.time.delayedCall(300, () => {
+        this.spinSound.play();
+      });
     }
   }
 
@@ -242,7 +291,7 @@ window.onload = function () {
       height: 1400,
       min: {
         width: 340,
-        height: 800,
+        height: 640,
       },
       max: {
         width: 1200,
@@ -253,6 +302,6 @@ window.onload = function () {
     backgroundColor: "#d7d7d7",
     scene: [playGame],
   };
-  console.log(Phaser);
+
   new Phaser.Game(gameConfig);
 };

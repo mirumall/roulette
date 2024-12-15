@@ -1,28 +1,5 @@
 import { gameOptions, secondWheelOptions } from "./gameOptions.js";
 
-export function createResetButton(scene) {
-  const resetButton = document.createElement("button");
-  resetButton.id = "resetButton";
-  resetButton.innerText = "룰렛 재설정";
-  resetButton.style.position = "absolute";
-  resetButton.style.bottom = "10px";
-  resetButton.style.left = "50%";
-  resetButton.style.transform = "translateX(-50%)";
-  resetButton.style.padding = "10px 15px";
-  resetButton.style.fontSize = "18px";
-  resetButton.style.color = "#fff";
-  resetButton.style.fontFamily = "jalnan2";
-  resetButton.style.backgroundColor = "#ff0000";
-  resetButton.style.border = "none";
-  resetButton.style.borderRadius = "10px";
-  resetButton.style.cursor = "pointer";
-  document.body.appendChild(resetButton);
-
-  resetButton.addEventListener("click", () => {
-    scene.showModal();
-  });
-}
-
 export function createModal(scene) {
   const modal = document.createElement("div");
   modal.id = "modal";
@@ -46,6 +23,72 @@ export function createModal(scene) {
 
   updateButton.addEventListener("click", () => {
     scene.updateWheelOptions();
+  });
+
+  // 공유 버튼 (이미지로 대체)
+  const shareButton = document.createElement("img");
+  shareButton.id = "shareButton";
+  shareButton.src = "./assets/share.png"; // 공유 버튼 이미지 경로
+  shareButton.alt = "공유";
+  shareButton.style.position = "absolute";
+  shareButton.style.bottom = "10px";
+  shareButton.style.left = "50%";
+  shareButton.style.transform = "translateX(-50%)";
+  shareButton.style.width = "45px"; // 이미지 가로 길이
+  shareButton.style.height = "45px"; // 이미지 세로 길이
+  shareButton.style.cursor = "pointer";
+  document.body.appendChild(shareButton);
+
+  // 처음으로 버튼
+  const homeButton = document.createElement("button");
+  homeButton.id = "homeButton";
+  homeButton.innerText = "처음으로";
+  homeButton.style.position = "absolute";
+  homeButton.style.bottom = "10px";
+  homeButton.style.left = "calc(50% + 80px)";
+  homeButton.style.transform = "translateX(-50%)";
+  homeButton.style.width = "100px"; // 가로 길이 설정
+  homeButton.style.height = "50px"; // 세로 길이 설정
+  homeButton.style.fontSize = "18px";
+  homeButton.style.color = "#fff";
+  homeButton.style.fontFamily = "jalnan2";
+  homeButton.style.backgroundColor = "#00ff00";
+  homeButton.style.border = "none";
+  homeButton.style.borderRadius = "10px";
+  homeButton.style.cursor = "pointer";
+  document.body.appendChild(homeButton);
+
+  // 재설정 버튼
+  const resetButton = document.createElement("button");
+  resetButton.id = "resetButton";
+  resetButton.innerText = "재설정";
+  resetButton.style.position = "absolute";
+  resetButton.style.bottom = "10px";
+  resetButton.style.left = "calc(50% - 80px)";
+  resetButton.style.transform = "translateX(-50%)";
+  resetButton.style.width = "100px"; // 가로 길이 설정
+  resetButton.style.height = "50px"; // 세로 길이 설정
+  resetButton.style.fontSize = "18px";
+  resetButton.style.color = "#fff";
+  resetButton.style.fontFamily = "jalnan2";
+  resetButton.style.backgroundColor = "#ff0000";
+  resetButton.style.border = "none";
+  resetButton.style.borderRadius = "10px";
+  resetButton.style.cursor = "pointer";
+  document.body.appendChild(resetButton);
+
+  shareButton.addEventListener("click", () => {
+    console.log("Share button clicked");
+    // 공유 기능 추가
+  });
+
+  homeButton.addEventListener("click", () => {
+    console.log("Home button clicked");
+    // 처음으로 기능 추가
+  });
+
+  resetButton.addEventListener("click", () => {
+    scene.showModal();
   });
 }
 
@@ -184,8 +227,6 @@ export function showModal(scene) {
   modal.appendChild(updateButton);
 
   modal.style.display = "block";
-  modal.style.display = "block";
-
   resetButton.style.backgroundColor = "#cccccc";
   resetButton.style.color = "#ffffff";
 }
