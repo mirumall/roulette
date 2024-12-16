@@ -10,7 +10,8 @@ import { updatePinState } from "./updatePinState.js";
 import { updateButtonState } from "./updateButtonState.js";
 import { spinInfinite } from "./spinInfinite.js";
 import { getPrizeIndex } from "./getPrizeIndex.js";
-import { createModal, showModal } from "./resetModal.js";
+import { createModal } from "./resetModal.js";
+import { showInitialModal } from "./showModal.js";
 
 class playGame extends Phaser.Scene {
   constructor() {
@@ -73,41 +74,76 @@ class playGame extends Phaser.Scene {
 
     this.input.on("gameobjectdown", this.onPinClick, this);
 
-    this.setupButton(this.abutton, "activeButtonA", "abutton", this.wheel1);
-    this.setupButton(this.bbutton, "activeButtonB", "bbutton", this.wheel2);
-    this.setupButton(
-      this.abbutton,
-      "activeButtonAB",
-      "abbutton",
-      this.wheel1,
-      this.wheel2
-    );
+    this.abutton.on("pointerdown", () => {
+      this.clickSound.play();
+      this.toggleButtonState(this.abutton, "activeButtonA", "abutton");
+      this.startStopTimer(); // 10초 뒤 룰렛 멈춤 타이머 시작
+    });
+
+    // B 버튼 동작
+    this.bbutton.on("pointerdown", () => {
+      this.clickSound.play();
+      this.toggleButtonState(this.bbutton, "activeButtonB", "bbutton");
+      this.startStopTimer(); // 10초 뒤 룰렛 멈춤 타이머 시작
+    });
+
+    // AB 버튼 동작
+    this.abbutton.on("pointerdown", () => {
+      this.clickSound.play();
+      this.toggleButtonState(this.abbutton, "activeButtonAB", "abbutton");
+      this.startStopTimer(); // 10초 뒤 룰렛 멈춤 타이머 시작
+    });
   }
 
-  setupButton(button, activeTexture, inactiveTexture, ...wheels) {
-    button.on("pointerdown", () => {
-      this.clickSound.play();
-      this.toggleButtonState(button, activeTexture, inactiveTexture);
+  startStopTimer() {
+    if (this.stopTimeout) {
+      clearTimeout(this.stopTimeout); // 기존 타이머 초기화
+    }
 
-      this.time.delayedCall(
-        1000,
-        () => {
-          this.onPinClick(null, this.pin);
-        },
-        [],
-        this
-      );
+    // 10초 뒤 createPin 내부 로직 실행
+    this.stopTimeout = setTimeout(() => {
+      if (this.wheel1.rotationTween) {
+        const currentAngle1 = this.wheel1.wheelContainer.angle % 360;
+        const direction1 = this.wheel1.direction || 1;
+        this.wheel1.rotationTween.stop();
+        this.wheel1.rotationTween = null;
 
-      // 10초 타이머 설정
-      this.stopWheelTimer = this.time.delayedCall(
-        10000,
-        () => {
-          wheels.forEach((wheel) => this.stopWheel(wheel));
-        },
-        [],
-        this
-      );
-    });
+        const randomFinalAngle1 = Phaser.Math.Between(360, 720);
+        const targetAngle1 = currentAngle1 + direction1 * randomFinalAngle1;
+
+        this.tweens.add({
+          targets: this.wheel1.wheelContainer,
+          angle: targetAngle1,
+          duration: 3000,
+          ease: "Cubic.easeOut",
+          onComplete: () => {
+            this.handleStop(this.wheel1);
+          },
+        });
+      }
+
+      if (this.wheel2.rotationTween) {
+        const currentAngle2 = this.wheel2.wheelContainer.angle % 360;
+        const direction2 = this.wheel2.direction || 1;
+        this.wheel2.rotationTween.stop();
+        this.wheel2.rotationTween = null;
+
+        const randomFinalAngle2 = Phaser.Math.Between(1440, 1800);
+        const targetAngle2 = currentAngle2 + direction2 * randomFinalAngle2;
+
+        this.tweens.add({
+          targets: this.wheel2.wheelContainer,
+          angle: targetAngle2,
+          duration: 3000,
+          ease: "Cubic.easeOut",
+          onComplete: () => {
+            this.handleStop(this.wheel2);
+            this.canSpin = true;
+            this.updateButtonState(true);
+          },
+        });
+      }
+    }, 10000); // 10초 뒤 실행
   }
 
   toggleButtonState(button, activeTexture, inactiveTexture) {
@@ -230,7 +266,7 @@ class playGame extends Phaser.Scene {
   }
 
   showModal() {
-    showModal(this);
+    showInitialModal(this);
   }
 
   updateWheelOptions() {
