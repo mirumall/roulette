@@ -33,7 +33,8 @@ export function createModal(scene) {
     "shareButton",
     "./assets/shareButton.png",
     "공유",
-    "50%"
+    "50%",
+    "./assets/share.png"
   );
   const homeButton = createImageButtonWithText(
     "homeButton",
@@ -147,6 +148,7 @@ function createImageButtonWithText(
     icon.src = iconSrc;
     icon.style.width = "20px";
     icon.style.height = "20px";
+    icon.style.marginBottom = "5px";
     contentWrapper.appendChild(icon);
   }
 
