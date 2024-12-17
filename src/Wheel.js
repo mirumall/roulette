@@ -12,7 +12,7 @@ export class Wheel {
   createWheel() {
     const graphics = this.scene.make.graphics({ x: 0, y: 0, add: false });
     const wheelRadius = this.options.wheelRadius;
-    const yOffset = 100;
+    const yOffset = 50;
 
     this.wheelContainer = this.scene.add.container(
       this.scene.scale.width / 2,
@@ -33,6 +33,10 @@ export class Wheel {
 
     const wheel = this.scene.add.sprite(0, 0, `wheel${this.index}`);
     this.wheelContainer.add(wheel);
+
+    const rouletteImage = this.scene.add.image(0, 0, "roulette");
+    rouletteImage.setDisplaySize(790, 790);
+    this.wheelContainer.add(rouletteImage);
 
     if (this.index === 0) {
       this.addSliceTexts(startDegrees, wheelRadius);
@@ -60,14 +64,18 @@ export class Wheel {
     startDegrees = -90;
     const totalSlices = this.options.slices.length;
     this.options.slices.forEach((slice) => {
-      if (!slice.text) return;
+      const sliceMidAngle = startDegrees + slice.degrees / 2;
+
+      // 텍스트가 없는 경우 각도만 반영하고 건너뛴다
+      if (!slice.text) {
+        startDegrees += slice.degrees;
+        return;
+      }
 
       const textX =
-        (wheelRadius - 140) *
-        Math.cos(Phaser.Math.DegToRad(startDegrees + slice.degrees / 2));
+        (wheelRadius - 140) * Math.cos(Phaser.Math.DegToRad(sliceMidAngle));
       const textY =
-        (wheelRadius - 140) *
-        Math.sin(Phaser.Math.DegToRad(startDegrees + slice.degrees / 2));
+        (wheelRadius - 140) * Math.sin(Phaser.Math.DegToRad(sliceMidAngle));
 
       let fontSize = "18px";
       if (slice.text.length >= 15) {
@@ -82,9 +90,11 @@ export class Wheel {
       });
 
       text.setOrigin(0.6);
-      text.setAngle(startDegrees + slice.degrees / 2 + 180);
+      text.setAngle(sliceMidAngle + 180);
+      text.setDepth(1); // Set text depth to be above the image
       this.wheelContainer.add(text);
 
+      // 각도 누적
       startDegrees += slice.degrees;
     });
   }
@@ -93,12 +103,16 @@ export class Wheel {
     const textRadius = wheelRadius - 22;
 
     this.options.slices.forEach((slice) => {
-      if (!slice.text) return;
-
       const arcAngle = slice.degrees;
       const textAngle = startDegrees + arcAngle / 2;
-      const color = slice.textColor || "#000000";
 
+      // 텍스트가 없으면 각도만 반영하고 건너뛴다
+      if (!slice.text) {
+        startDegrees += arcAngle;
+        return;
+      }
+
+      const color = slice.textColor || "#000000";
       const font = this.getFont(slice);
 
       this.drawPhaserCurvedText(
@@ -110,6 +124,7 @@ export class Wheel {
         color
       );
 
+      // 각도 누적
       startDegrees += arcAngle;
     });
   }
@@ -169,6 +184,7 @@ export class Wheel {
 
       charText.setOrigin(0.5);
       charText.setAngle(Phaser.Math.RadToDeg(currentAngle) + 90);
+      charText.setDepth(1); // Set text depth to be above the image
 
       this.wheelContainer.add(charText);
 

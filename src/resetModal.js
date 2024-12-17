@@ -23,6 +23,29 @@ export function createModal(scene) {
 
   document.body.appendChild(modal);
 
+  const resetButton = createImageButtonWithText(
+    "resetButton",
+    "./assets/updateButton.png",
+    "재설정",
+    "calc(50% - 105px)"
+  );
+  const shareButton = createImageButtonWithText(
+    "shareButton",
+    "./assets/shareButton.png",
+    "공유",
+    "50%"
+  );
+  const homeButton = createImageButtonWithText(
+    "homeButton",
+    "./assets/resetButton.png",
+    "초기화",
+    "calc(50% + 105px)"
+  );
+
+  document.body.appendChild(resetButton);
+  document.body.appendChild(shareButton);
+  document.body.appendChild(homeButton);
+
   const updateButton = document.createElement("button");
   updateButton.id = "updateButton";
   updateButton.innerText = "변경하기";
@@ -32,64 +55,25 @@ export function createModal(scene) {
     scene.updateWheelOptions();
   });
 
-  // 공유 버튼 (이미지로 대체)
-  const shareButton = document.createElement("img");
-  shareButton.id = "shareButton";
-  shareButton.src = "./assets/share.png"; // 공유 버튼 이미지 경로
-  shareButton.alt = "공유";
-  shareButton.style.position = "absolute";
-  shareButton.style.bottom = "10px";
-  shareButton.style.left = "50%";
-  shareButton.style.transform = "translateX(-50%)";
-  shareButton.style.width = "45px"; // 이미지 가로 길이
-  shareButton.style.height = "45px"; // 이미지 세로 길이
-  shareButton.style.cursor = "pointer";
-  document.body.appendChild(shareButton);
+  window.addEventListener("disable-click", () => {
+    resetButton.style.pointerEvents = "none";
+    shareButton.style.pointerEvents = "none";
+    homeButton.style.pointerEvents = "none";
+    console.log("클릭 비활성화");
+  });
 
-  // 처음으로 버튼
-  const homeButton = document.createElement("button");
-  homeButton.id = "homeButton";
-  homeButton.innerText = "처음으로";
-  homeButton.style.position = "absolute";
-  homeButton.style.bottom = "10px";
-  homeButton.style.left = "calc(50% + 80px)";
-  homeButton.style.transform = "translateX(-50%)";
-  homeButton.style.width = "100px"; // 가로 길이 설정
-  homeButton.style.height = "50px"; // 세로 길이 설정
-  homeButton.style.fontSize = "18px";
-  homeButton.style.color = "#fff";
-  homeButton.style.fontFamily = "jalnan2";
-  homeButton.style.backgroundColor = "#00ff00";
-  homeButton.style.border = "none";
-  homeButton.style.borderRadius = "10px";
-  homeButton.style.cursor = "pointer";
-  document.body.appendChild(homeButton);
-
-  // 재설정 버튼
-  const resetButton = document.createElement("button");
-  resetButton.id = "resetButton";
-  resetButton.innerText = "재설정";
-  resetButton.style.position = "absolute";
-  resetButton.style.bottom = "10px";
-  resetButton.style.left = "calc(50% - 80px)";
-  resetButton.style.transform = "translateX(-50%)";
-  resetButton.style.width = "100px"; // 가로 길이 설정
-  resetButton.style.height = "50px"; // 세로 길이 설정
-  resetButton.style.fontSize = "18px";
-  resetButton.style.color = "#fff";
-  resetButton.style.fontFamily = "jalnan2";
-  resetButton.style.backgroundColor = "#ff0000";
-  resetButton.style.border = "none";
-  resetButton.style.borderRadius = "10px";
-  resetButton.style.cursor = "pointer";
-  document.body.appendChild(resetButton);
+  window.addEventListener("enable-click", () => {
+    resetButton.style.pointerEvents = "auto";
+    shareButton.style.pointerEvents = "auto";
+    homeButton.style.pointerEvents = "auto";
+    console.log("클릭 활성화");
+  });
 
   shareButton.addEventListener("click", async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "룰렛 게임",
-          text: "이 룰렛 게임을 확인해보세요!",
+          title: "미루 세계여행 주사위 룰렛 게임!",
           url: window.location.href,
         });
         console.log("공유 성공");
@@ -101,8 +85,8 @@ export function createModal(scene) {
     }
   });
 
+  resetButton.addEventListener("click", () => showInitialModal(scene));
   homeButton.addEventListener("click", () => {
-    console.log("Home button clicked");
     Object.assign(gameOptions, JSON.parse(JSON.stringify(initialGameOptions)));
     Object.assign(
       secondWheelOptions,
@@ -111,8 +95,62 @@ export function createModal(scene) {
     scene.updateWheelOptions();
     modal.style.display = "none";
   });
+}
 
-  resetButton.addEventListener("click", () => {
-    showInitialModal(scene);
-  });
+function createImageButtonWithText(
+  id,
+  imgSrc,
+  textContent,
+  positionLeft,
+  iconSrc
+) {
+  const container = document.createElement("div");
+  container.id = id;
+  container.style.position = "absolute";
+  container.style.bottom = "10px";
+  container.style.left = positionLeft;
+  container.style.transform = "translateX(-50%)";
+  container.style.width = "100px";
+  container.style.height = "50px";
+  container.style.cursor = "pointer";
+  container.style.display = "flex";
+  container.style.alignItems = "center";
+  container.style.justifyContent = "center";
+  container.style.overflow = "hidden";
+
+  const image = document.createElement("img");
+  image.src = imgSrc;
+  image.style.position = "absolute";
+  image.style.width = "100%";
+  image.style.height = "100%";
+  image.style.zIndex = "0";
+  image.style.borderRadius = "10px";
+  container.appendChild(image);
+
+  const contentWrapper = document.createElement("div");
+  contentWrapper.style.position = "relative";
+  contentWrapper.style.zIndex = "1";
+  contentWrapper.style.display = "flex";
+  contentWrapper.style.alignItems = "center";
+  contentWrapper.style.gap = "5px";
+
+  const text = document.createElement("div");
+  text.innerText = textContent;
+  text.style.color = "#ffffff";
+  text.style.fontSize = "18px";
+  text.style.fontWeight = "normal";
+  text.style.fontFamily = "'Jua', sans-serif";
+  contentWrapper.appendChild(text);
+
+  if (iconSrc) {
+    const icon = document.createElement("img");
+    icon.src = iconSrc;
+    icon.style.width = "20px";
+    icon.style.height = "20px";
+    contentWrapper.appendChild(icon);
+  }
+
+  container.appendChild(contentWrapper);
+
+  return container;
 }

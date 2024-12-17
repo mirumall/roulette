@@ -3,7 +3,7 @@ import { gameOptions, secondWheelOptions } from "./gameOptions.js";
 
 export function createPin() {
   this.pin = this.add
-    .sprite(this.scale.width / 2, this.scale.height / 2 + 100, "pin")
+    .sprite(this.scale.width / 2, this.scale.height / 2 + 50, "pin")
     .setInteractive();
 
   this.updatePinState(true);
@@ -24,7 +24,7 @@ export function createPin() {
       this.wheel1.rotationTween.stop();
       this.wheel1.rotationTween = null;
 
-      const randomFinalAngle1 = Phaser.Math.Between(720, 1080);
+      const randomFinalAngle1 = Phaser.Math.Between(1080, 1440);
       const targetAngle1 = currentAngle1 + direction1 * randomFinalAngle1;
 
       this.tweens.add({
