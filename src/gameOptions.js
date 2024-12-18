@@ -65,5 +65,5 @@ export const secondWheelOptions = {
       textColor: "#000000",
     },
   ],
-  wheelRadius: 350,
+  wheelRadius: 370,
 };

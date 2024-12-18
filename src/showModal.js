@@ -233,6 +233,7 @@ export function showEditModal(scene, type) {
     scene.updateWheelOptions();
 
     modal.style.display = "none";
+    scene.scene.resume();
     resetButton.style.color = "#fff";
   });
 }

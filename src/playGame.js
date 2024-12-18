@@ -121,6 +121,9 @@ class PlayGame extends Phaser.Scene {
       clearTimeout(this.stopTimeout);
     }
 
+    this.isSpinning = true;
+    window.dispatchEvent(new Event("disable-click"));
+
     this.stopTimeout = setTimeout(() => {
       this.stopWheel(this.wheel1, 360, 720);
       this.stopWheel(this.wheel2, 1440, 1800);
@@ -152,7 +155,7 @@ class PlayGame extends Phaser.Scene {
   }
 
   toggleButtonState(button, activeTexture, inactiveTexture) {
-    this.disableAllButtons();
+    this.updateButtonState(false);
 
     if (this.activeButton && this.activeButton !== button) {
       clearInterval(this.buttonInterval);
@@ -170,12 +173,6 @@ class PlayGame extends Phaser.Scene {
     }, 500);
 
     this.canSpin = true;
-  }
-
-  disableAllButtons() {
-    this.abutton.disableInteractive();
-    this.bbutton.disableInteractive();
-    this.abbutton.disableInteractive();
   }
 
   onPinClick(pointer, gameObject) {
@@ -201,20 +198,6 @@ class PlayGame extends Phaser.Scene {
     }
   }
 
-  startStopTimer() {
-    if (this.stopTimeout) {
-      clearTimeout(this.stopTimeout);
-    }
-
-    this.isSpinning = true;
-    window.dispatchEvent(new Event("disable-click"));
-
-    this.stopTimeout = setTimeout(() => {
-      this.stopWheel(this.wheel1, 360, 720);
-      this.stopWheel(this.wheel2, 1440, 1800);
-    }, 10000);
-  }
-
   handleStop(wheel) {
     handleStop.call(this, wheel);
 
@@ -223,22 +206,10 @@ class PlayGame extends Phaser.Scene {
     }
 
     this.isSpinning = false;
+    this.canSpin = true;
+
+    this.updateButtonState(true);
     window.dispatchEvent(new Event("enable-click"));
-  }
-
-  showGameOver() {
-    this.canSpin = false;
-
-    this.time.delayedCall(4000, () => {
-      spark.destroy();
-      this.pinClickCount = 0;
-      this.canSpin = true;
-
-      this.createWheels();
-      createPin.call(this);
-
-      this.scene.resume();
-    });
   }
 
   showModal() {
@@ -253,6 +224,7 @@ class PlayGame extends Phaser.Scene {
     createPin.call(this);
 
     document.getElementById("modal").style.display = "none";
+    this.updateButtonState(true);
   }
 
   updateOptions(options, prefix) {
@@ -273,7 +245,26 @@ class PlayGame extends Phaser.Scene {
   }
 
   updateButtonState(isActive) {
-    updateButtonState.call(this, isActive);
+    if (isActive) {
+      this.abutton.setInteractive().setTexture("activeButtonA");
+      this.bbutton.setInteractive().setTexture("activeButtonB");
+      this.abbutton.setInteractive().setTexture("activeButtonAB");
+    } else {
+      this.abutton.disableInteractive();
+      this.bbutton.disableInteractive();
+      this.abbutton.disableInteractive();
+    }
+
+    if (this.buttonInterval) {
+      clearInterval(this.buttonInterval);
+      if (this.activeButton) {
+        this.activeButton.setTexture(this.activeButton.activeTexture);
+      }
+    }
+
+    this.time.delayedCall(300, () => {
+      this.updatePinState(isActive);
+    });
   }
 
   spinInfinite(wheel, direction, speed) {

@@ -36,6 +36,7 @@ export class Wheel {
 
     const rouletteImage = this.scene.add.image(0, 0, "roulette");
     rouletteImage.setDisplaySize(790, 790);
+    rouletteImage.setCrop(50, 50, 690, 690);
     this.wheelContainer.add(rouletteImage);
 
     if (this.index === 0) {
@@ -166,7 +167,7 @@ export class Wheel {
     const totalTextArc = charAngle * charArray.length;
 
     let currentAngle =
-      Phaser.Math.DegToRad(startAngle) - totalTextArc / 2.2 + charAngle / 2;
+      Phaser.Math.DegToRad(startAngle) - totalTextArc / 2.1 + charAngle / 2;
 
     charArray.forEach((char) => {
       if (char === " ") {
@@ -182,7 +183,6 @@ export class Wheel {
         color: color,
       });
 
-      charText.setOrigin(0.5);
       charText.setAngle(Phaser.Math.RadToDeg(currentAngle) + 90);
       charText.setDepth(1); // Set text depth to be above the image
 
