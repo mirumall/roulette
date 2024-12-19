@@ -34,10 +34,12 @@ export class Wheel {
     const wheel = this.scene.add.sprite(0, 0, `wheel${this.index}`);
     this.wheelContainer.add(wheel);
 
-    const rouletteImage = this.scene.add.image(0, 0, "roulette");
-    rouletteImage.setDisplaySize(790, 790);
-
-    this.wheelContainer.add(rouletteImage);
+    const shadow = this.scene.add.image(
+      this.scene.scale.width / 2,
+      this.scene.scale.height / 2 + yOffset,
+      "shadow"
+    );
+    shadow.setDisplaySize(600, 600);
 
     if (this.index === 0) {
       this.addSliceTexts(startDegrees, wheelRadius);

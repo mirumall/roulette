@@ -46,7 +46,6 @@ class PlayGame extends Phaser.Scene {
       { key: "activeButtonA", path: "./assets/active_button_a.png" },
       { key: "activeButtonB", path: "./assets/active_button_b.png" },
       { key: "activeButtonAB", path: "./assets/active_button_ab.png" },
-      { key: "roulette", path: "./assets/roulette.png" },
       { key: "shadow", path: "./assets/shadow.png" },
       { key: "titleImage", path: "./assets/gameText.png" },
     ];
