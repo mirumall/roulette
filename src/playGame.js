@@ -1,15 +1,14 @@
 import Phaser from "phaser";
 import { gameOptions, secondWheelOptions } from "./gameOptions.js";
 import { Wheel } from "./Wheel.js";
-import { createPin } from "./createPin.js";
-import { createPrizeText } from "./createPrizeText.js";
-import { createButtons } from "./createButtons.js";
-import { handleStop } from "./handleStop.js";
-import { readResult } from "./readResult.js";
-import { updatePinState } from "./updatePinState.js";
-import { updateButtonState } from "./updateButtonState.js";
-import { spinInfinite } from "./spinInfinite.js";
-import { getPrizeIndex } from "./getPrizeIndex.js";
+import { createPrizeText, getPrizeIndex } from "./createPrizeText.js";
+import { createButtons, createPin } from "./createButtons.js";
+import {
+  spinInfinite,
+  updatePinState,
+  readResult,
+  handleStop,
+} from "./rouletteHandle.js";
 import { createModal } from "./resetModal.js";
 import { showInitialModal } from "./showModal.js";
 
@@ -48,6 +47,7 @@ class PlayGame extends Phaser.Scene {
       { key: "activeButtonB", path: "./assets/active_button_b.png" },
       { key: "activeButtonAB", path: "./assets/active_button_ab.png" },
       { key: "roulette", path: "./assets/roulette.png" },
+      { key: "shadow", path: "./assets/shadow.png" },
       { key: "titleImage", path: "./assets/gameText.png" },
     ];
 
@@ -179,6 +179,11 @@ class PlayGame extends Phaser.Scene {
     if (gameObject.texture.key === "pin" && this.canSpin) {
       this.pinClickCount++;
       this.canSpin = false;
+      this.updatePinState("unpin");
+
+      if (navigator.vibrate) {
+        navigator.vibrate(500);
+      }
 
       if (this.buttonInterval) {
         clearInterval(this.buttonInterval);
@@ -261,10 +266,7 @@ class PlayGame extends Phaser.Scene {
         this.activeButton.setTexture(this.activeButton.activeTexture);
       }
     }
-
-    this.time.delayedCall(300, () => {
-      this.updatePinState(isActive);
-    });
+    this.updatePinState(isActive);
   }
 
   spinInfinite(wheel, direction, speed) {

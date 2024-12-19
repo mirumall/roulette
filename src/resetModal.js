@@ -26,20 +26,16 @@ export function createModal(scene) {
   const resetButton = createImageButtonWithText(
     "resetButton",
     "./assets/updateButton.png",
-    "재설정",
     "calc(50% - 105px)"
   );
   const shareButton = createImageButtonWithText(
     "shareButton",
     "./assets/shareButton.png",
-    "공유",
-    "50%",
-    "./assets/share.png"
+    "50%"
   );
   const homeButton = createImageButtonWithText(
     "homeButton",
     "./assets/resetButton.png",
-    "초기화",
     "calc(50% + 105px)"
   );
 
@@ -60,14 +56,12 @@ export function createModal(scene) {
     resetButton.style.pointerEvents = "none";
     shareButton.style.pointerEvents = "none";
     homeButton.style.pointerEvents = "none";
-    console.log("클릭 비활성화");
   });
 
   window.addEventListener("enable-click", () => {
     resetButton.style.pointerEvents = "auto";
     shareButton.style.pointerEvents = "auto";
     homeButton.style.pointerEvents = "auto";
-    console.log("클릭 활성화");
   });
 
   shareButton.addEventListener("click", async () => {
@@ -77,7 +71,6 @@ export function createModal(scene) {
           title: "미루 세계여행 주사위 룰렛 게임!",
           url: window.location.href,
         });
-        console.log("공유 성공");
       } catch (error) {
         console.error("공유 실패", error);
       }
@@ -98,13 +91,7 @@ export function createModal(scene) {
   });
 }
 
-function createImageButtonWithText(
-  id,
-  imgSrc,
-  textContent,
-  positionLeft,
-  iconSrc
-) {
+function createImageButtonWithText(id, imgSrc, positionLeft) {
   const container = document.createElement("div");
   container.id = id;
   container.style.position = "absolute";
@@ -134,23 +121,6 @@ function createImageButtonWithText(
   contentWrapper.style.display = "flex";
   contentWrapper.style.alignItems = "center";
   contentWrapper.style.gap = "5px";
-
-  const text = document.createElement("div");
-  text.innerText = textContent;
-  text.style.color = "#ffffff";
-  text.style.fontSize = "18px";
-  text.style.fontWeight = "normal";
-  text.style.fontFamily = "'Jua', sans-serif";
-  contentWrapper.appendChild(text);
-
-  if (iconSrc) {
-    const icon = document.createElement("img");
-    icon.src = iconSrc;
-    icon.style.width = "20px";
-    icon.style.height = "20px";
-    icon.style.marginBottom = "5px";
-    contentWrapper.appendChild(icon);
-  }
 
   container.appendChild(contentWrapper);
 

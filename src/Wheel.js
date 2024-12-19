@@ -36,7 +36,7 @@ export class Wheel {
 
     const rouletteImage = this.scene.add.image(0, 0, "roulette");
     rouletteImage.setDisplaySize(790, 790);
-    rouletteImage.setCrop(50, 50, 690, 690);
+
     this.wheelContainer.add(rouletteImage);
 
     if (this.index === 0) {
@@ -67,7 +67,6 @@ export class Wheel {
     this.options.slices.forEach((slice) => {
       const sliceMidAngle = startDegrees + slice.degrees / 2;
 
-      // 텍스트가 없는 경우 각도만 반영하고 건너뛴다
       if (!slice.text) {
         startDegrees += slice.degrees;
         return;
@@ -92,10 +91,9 @@ export class Wheel {
 
       text.setOrigin(0.6);
       text.setAngle(sliceMidAngle + 180);
-      text.setDepth(1); // Set text depth to be above the image
+      text.setDepth(1);
       this.wheelContainer.add(text);
 
-      // 각도 누적
       startDegrees += slice.degrees;
     });
   }
@@ -107,7 +105,6 @@ export class Wheel {
       const arcAngle = slice.degrees;
       const textAngle = startDegrees + arcAngle / 2;
 
-      // 텍스트가 없으면 각도만 반영하고 건너뛴다
       if (!slice.text) {
         startDegrees += arcAngle;
         return;
@@ -125,7 +122,6 @@ export class Wheel {
         color
       );
 
-      // 각도 누적
       startDegrees += arcAngle;
     });
   }
@@ -184,7 +180,7 @@ export class Wheel {
       });
 
       charText.setAngle(Phaser.Math.RadToDeg(currentAngle) + 90);
-      charText.setDepth(1); // Set text depth to be above the image
+      charText.setDepth(1);
 
       this.wheelContainer.add(charText);
 

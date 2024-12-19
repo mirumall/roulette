@@ -85,7 +85,7 @@ export function showEditModal(scene, type) {
 
   modal.innerHTML = "";
 
-  modal.style.width = "250px";
+  modal.style.width = "270px";
   modal.style.height = "500px";
   modal.style.fontSize = "1.5rem";
   modal.style.padding = "20px";
@@ -104,10 +104,10 @@ export function showEditModal(scene, type) {
 
   const formContainer = document.createElement("div");
   formContainer.style.flex = "1";
-  formContainer.style.overflowY = "auto"; // 인풋 컨테이너의 스크롤을 활성화
-  formContainer.style.maxHeight = "calc(100% - 120px)"; // 하단 버튼 영역을 제외한 높이 설정
+  formContainer.style.overflowY = "auto";
 
-  // 스크롤 바 스타일 추가
+  formContainer.style.maxHeight = "calc(100% - 100px)";
+
   const formStyle = document.createElement("style");
   formStyle.innerHTML = `
     #modal div::-webkit-scrollbar {
@@ -128,6 +128,7 @@ export function showEditModal(scene, type) {
   form.style.display = "flex";
   form.style.flexDirection = "column";
   form.style.gap = "10px";
+  form.style.marginBottom = "20px";
 
   const options = type === "inner" ? gameOptions : secondWheelOptions;
   const maxLength = options.slices.length;
@@ -189,9 +190,9 @@ export function showEditModal(scene, type) {
   const backButton = document.createElement("button");
   backButton.id = "backButton";
   backButton.innerText = "뒤로가기";
-  backButton.style.padding = "15px 30px";
+  backButton.style.padding = "10px 20px";
   backButton.style.fontSize = "1rem";
-  backButton.style.marginLeft = "17px";
+  backButton.style.marginLeft = "20px";
   backButton.style.borderRadius = "8px";
   backButton.style.border = "1px solid #ccc";
   backButton.style.backgroundColor = "#ffffff";
@@ -201,8 +202,8 @@ export function showEditModal(scene, type) {
   const updateButton = document.createElement("button");
   updateButton.id = "updateButton";
   updateButton.innerText = "변경하기";
-  updateButton.style.padding = "15px 30px";
-  updateButton.style.marginRight = "17px";
+  updateButton.style.padding = "10px 20px";
+  updateButton.style.marginRight = "30px";
   updateButton.style.fontSize = "1rem";
   updateButton.style.borderRadius = "8px";
   updateButton.style.border = "1px solid #ccc";
